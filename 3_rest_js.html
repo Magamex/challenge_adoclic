@@ -15,7 +15,8 @@
     <div class="accordion">
         <div class="accordion-item">
             <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#consigna" aria-expanded="true">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#consigna"
+                    aria-expanded="true">
                     Consigna
                 </button>
             </h2>
@@ -23,35 +24,39 @@
                 <div class="accordion-body">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
-                            Consultar la api pública de pokeapi (<a href="https://pokeapi.co/docs/v2" target="_blank">Documentación</a>) para obtener los primeros 5 pokemons (https://pokeapi.co/api/v2/pokemon)
+                            Consultar la api pública de pokeapi (<a href="https://pokeapi.co/docs/v2"
+                                target="_blank">Documentación</a>) para obtener los primeros 5 pokemons
+                            (https://pokeapi.co/api/v2/pokemon)
                         </li>
                         <li class="list-group-item">
                             Por cada pokemon consultar el detalle (https://pokeapi.co/api/v2/pokemon/{id_pokemon}/)
                         </li>
                         <li class="list-group-item">
-                            Completar la tabla de abajo, con los datos de cada pokemon (id, nombre, ancho, alto, imágen). Para la imágen usar las que estan dentro del array "sprites"
+                            Completar la tabla de abajo, con los datos de cada pokemon (id, nombre, ancho, alto,
+                            imágen). Para la imágen usar las que estan dentro del array "sprites"
                         </li>
                     </ul>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 
     <div class="accordion mt-5">
         <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pokemons-list" aria-expanded="true">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pokemons-list"
+                    aria-expanded="true">
                     Listado de Pokemons
                 </button>
             </h2>
             <div id="pokemons-list" class="accordion-collapse collapse show">
                 <div class="accordion-body">
-                    
+
                     <table id="pokemons-table" class="table table-striped">
                         <thead>
                             <th>Id</th>
                             <th>Nombre</th>
-                            <th>Ancho</th>
+                            <th>Peso</th>
                             <th>Alto</th>
                             <th>Img</th>
                         </thead>
@@ -61,7 +66,7 @@
 
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 
 
@@ -69,7 +74,32 @@
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
         crossorigin="anonymous"></script>
 
+    <script>
+        const table = document.getElementById("pokemons-table").getElementsByTagName("tbody")[0];
 
+        const randomNum = Math.floor(Math.random() * 151) + 1;
+
+        fetch('https://pokeapi.co/api/v2/pokemon?limit=5&offset='+randomNum)
+            .then(response => response.json())
+            .then(data => {
+                data.results.forEach(pokemon => {
+                    fetch(pokemon.url)
+                        .then(response => response.json())
+                        .then(pokemon => {
+                            const row = table.insertRow();
+                            row.insertCell().innerText = pokemon.id;
+                            row.insertCell().innerText = pokemon.name;
+                            row.insertCell().innerText = pokemon.weight;
+                            row.insertCell().innerText = pokemon.height;
+                            const imgCell = row.insertCell();
+                            const img = document.createElement("img");
+                            img.src = pokemon.sprites.front_default;
+                            imgCell.appendChild(img);
+                        });
+                });
+            });
+
+    </script>
 
 </body>
 
