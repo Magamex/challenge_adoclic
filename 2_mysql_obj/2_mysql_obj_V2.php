@@ -85,7 +85,7 @@ Class UserStats {
         $this->model = new UserStatsModel($conn);
     }
 
-    public function getStats($dateFrom, $dateTo, $totalClicks = null){
+    public function getStats(string $dateFrom, string $dateTo, int $totalClicks = null): array{
         $result = $this->model->selectStats($dateFrom, $dateTo, $totalClicks);
 
         $stats = array();

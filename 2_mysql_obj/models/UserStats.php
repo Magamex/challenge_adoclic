@@ -63,7 +63,7 @@ class UserStatsModel {
         $this->date = $date;
     }
 
-    public function selectStats($dateFrom, $dateTo, $totalClicks = null){
+    public function selectStats(string $dateFrom, string $dateTo, string $totalClicks = null): mysqli_result{
         $sql = "SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name, 
                     SUM(us.views) AS total_views, 
                     SUM(us.clicks) AS total_clicks, 

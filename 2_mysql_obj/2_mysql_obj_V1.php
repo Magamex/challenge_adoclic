@@ -82,7 +82,7 @@ class UserStats {
         }
     }
 
-    public function getStats($dateFrom, $dateTo, $totalClicks = null) {
+    public function getStats(string $dateFrom, string $dateTo, int $totalClicks = null): array {
         $sql = "SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name, 
                     SUM(us.views) AS total_views, 
                     SUM(us.clicks) AS total_clicks, 
