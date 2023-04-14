@@ -70,3 +70,67 @@
 
 
 */
+
+class UserStats {
+    private $conn;
+    
+    public function __construct($servername, $username, $password, $dbname) {
+        // Conectar a la base de datos
+        $this->conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Verificar la conexión
+        if ($this->conn->connect_error) {
+            die("Conexión fallida: " . $this->conn->connect_error);
+        }
+    }
+
+    public function getStats($dateFrom, $dateTo, $totalClicks = null) {
+        $sql = "SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name, 
+                    SUM(us.views) AS total_views, 
+                    SUM(us.clicks) AS total_clicks, 
+                    SUM(us.conversions) AS total_conversions, 
+                    ROUND((SUM(us.conversions) / SUM(us.clicks)) * 100, 2) AS cr, 
+                    MAX(us.date) AS last_date 
+                    FROM user_stats us 
+                    INNER JOIN users u ON us.user_id = u.id 
+                    WHERE us.date >= ? AND us.date <= ? AND u.status = 'active'
+                    GROUP BY u.id";
+
+        if (!is_null($totalClicks)) {
+            $sql .= " HAVING total_clicks >= ?";
+        }
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->bind_param('ssi', $dateFrom, $dateTo, $totalClicks);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        $stats = array();
+        while($row = $result->fetch_assoc()) {
+            $stats[] = array(
+                'full_name' => $row['full_name'],
+                'total_views' => $row['total_views'],
+                'total_clicks' => $row['total_clicks'],
+                'total_conversions' => $row['total_conversions'],
+                'cr' => $row['cr'],
+                'last_date' => $row['last_date']
+            );
+        }
+
+        return $stats;
+    }
+
+    public function __destruct() {
+        // Cerrar la conexión a la base de datos
+        $this->conn->close();
+    }
+}
+
+// Uso de la clase UserStats
+$userStats = new UserStats("127.0.0.1", "root", "", "datos");
+$results = $userStats->getStats("2022-10-01", "2022-10-15", 9000);
+print_r($results);
+
+
