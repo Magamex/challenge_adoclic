@@ -75,10 +75,8 @@ class UserStats {
     private $conn;
     
     public function __construct($servername, $username, $password, $dbname) {
-        // Conectar a la base de datos
         $this->conn = new mysqli($servername, $username, $password, $dbname);
 
-        // Verificar la conexión
         if ($this->conn->connect_error) {
             die("Conexión fallida: " . $this->conn->connect_error);
         }
@@ -93,7 +91,7 @@ class UserStats {
                     MAX(us.date) AS last_date 
                     FROM user_stats us 
                     INNER JOIN users u ON us.user_id = u.id 
-                    WHERE us.date >= ? AND us.date <= ? AND u.status = 'active'
+                    WHERE us.date >= ? AND us.date <= DATE_ADD(?, INTERVAL 1 DAY) AND u.status = 'active'
                     GROUP BY u.id";
 
         if (!is_null($totalClicks)) {
@@ -123,14 +121,36 @@ class UserStats {
     }
 
     public function __destruct() {
-        // Cerrar la conexión a la base de datos
         $this->conn->close();
     }
 }
 
-// Uso de la clase UserStats
 $userStats = new UserStats("127.0.0.1", "root", "", "datos");
 $results = $userStats->getStats("2022-10-01", "2022-10-15", 9000);
 print_r($results);
 
+/*
+Array
+(
+    [0] => Array
+        (
+            [full_name] => marge simpson
+            [total_views] => 8312072
+            [total_clicks] => 9271
+            [total_conversions] => 639
+            [cr] => 6.89
+            [last_date] => 2022-10-15 10:00:11
+        )
 
+    [1] => Array
+        (
+            [full_name] => bart simpson
+            [total_views] => 9513413
+            [total_clicks] => 9436
+            [total_conversions] => 655
+            [cr] => 6.94
+            [last_date] => 2022-10-14 16:39:29
+        )
+
+)
+*/
