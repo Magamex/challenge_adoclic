@@ -22,20 +22,19 @@ La función debe seguir funcionando, ya sea se le agreguen o quiten nombres o co
 
  */
 
-function assignColorsToNames(array $names, array $colors): array {
+$assignColorsToNames = function(array $names, array $colors): array {
     $result = [];
-    $colorIndex = 0;
-    foreach ($names as $name) {
-        $result[] = ['name' => $name, 'color' => $colors[$colorIndex]];
-        $colorIndex++;
-        if ($colorIndex >= count($colors)) {
-            $colorIndex = 0;
-        }
+    $colorCount = count($colors);
+    for ($i = 0, $n = count($names); $i < $n; $i++) {
+        $result[] = [
+            'name' => $names[$i],
+            'color' => $colors[$i % $colorCount]
+        ];
     }
     return $result;
-}
+};
 
-$getNames = function(){
+$getNames = function(): array{
     $names = [];
     for($i=0;$i<21;$i++){
         $names[] = 'name' . ($i + 1);
@@ -47,7 +46,7 @@ $names = $getNames();
 
 $colors = ['red', 'green', 'blue', 'yellow', 'white'];
 
-$result = assignColorsToNames($names, $colors);
+$result = $assignColorsToNames($names, $colors);
 
 print_r($result);
 
